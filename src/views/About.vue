@@ -1,5 +1,19 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+   <input type="text" v-model="username">
   </div>
 </template>
+<script>
+import {mapGetters} from 'vuex'
+export default {
+   data(){
+     return{
+       name:''
+     }
+   },
+   computed:{
+      ...mapGetters(['username']) 
+
+   }
+}
+</script>
