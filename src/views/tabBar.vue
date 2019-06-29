@@ -21,6 +21,7 @@
         justify-content: space-between;
         box-sizing: border-box;
         background: white;
+        box-sizing: border-box;
     }
     .taBar div{
         width: 50px;

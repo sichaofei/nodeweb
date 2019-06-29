@@ -1,10 +1,10 @@
 <template>
     <div class="reser">
         <h1>注册</h1>
-        <mt-field label="用户名" placeholder="请输入用户名" v-model="name"></mt-field>
-        <mt-field label="密码" placeholder="请输入密码" type="password" v-model="password"></mt-field>
-         <mt-field label="密码" placeholder="请再次输入密码" type="password" v-model="passwordT"></mt-field>
-          <mt-field label="手机号" placeholder="请再次手机号" type="number" maxLength="11" v-model="phone"></mt-field>
+        <mt-field label="用户名"   @blur.native.capture="bulrScroll()" placeholder="请输入用户名" v-model="name"></mt-field>
+        <mt-field label="密码"   @blur.native.capture="bulrScroll()" placeholder="请输入密码" type="password" v-model="password"></mt-field>
+         <mt-field label="密码"   @blur.native.capture="bulrScroll()" placeholder="请再次输入密码" type="password" v-model="passwordT"></mt-field>
+          <mt-field label="手机号"  @blur.native.capture="bulrScroll()" placeholder="请再次手机号" type="number" maxLength="11" v-model="phone"></mt-field>
         <mt-button type="primary" @click="reser()" class="loginTxt">注册</mt-button>
           <mt-button type="default" @click="tologin()" class="loginTxt">登陆</mt-button>
          <Header title="注册" backNum="index"/>
@@ -86,6 +86,10 @@ export default {
            }
 
        })
+    },
+    // 解决键盘落下页面回弹
+    bulrScroll(){
+        window.scrollTo(0,0)
     }
    }
 }

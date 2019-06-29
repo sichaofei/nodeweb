@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="userBox">
         <div class="user">
             <div class="left">
                 <img src="../../images/mode.jpg" alt="">
@@ -64,6 +64,11 @@ export default {
         font-weight: 500;
         padding-top: 80px;
         padding-left: 10px;
+         box-sizing: border-box;
+    }
+    .userBox{
+        width: 100VW;
+        box-sizing: border-box;
     }
     .user .left{
         width: 50px;

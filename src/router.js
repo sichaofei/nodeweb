@@ -37,7 +37,7 @@ const router=new Router({
       name: 'map',
       component: Map,
       meta: {
-        isLogin: true
+        isLogin: false
       },
     },
     {
@@ -71,7 +71,6 @@ const router=new Router({
   ]
 })
 router.beforeEach((to, from, next) => {
-  console.log()
   if (to.meta.isLogin) {  // 判断该路由是否需要登录权限
     if(localStorage.getItem("userId")){
       store.state.userId=localStorage.getItem("userId")

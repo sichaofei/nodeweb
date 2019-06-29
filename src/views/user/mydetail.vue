@@ -2,16 +2,15 @@
     <div class="userDetail">
         <div class="inputFileWrapper">
              <label for="inputFile">
-                 <form action="" enctype="multipart/form-data">
                  <!-- <input type="file" id="inputFile" @input="upload()" ref="inputFile"/> -->
                  <input type="file" name="multfile" id="inputFile" multiple="multiple" @change="upload()" ref="inputFile" accept="image/*">
-                </form >
                  <span class="custorm-style">
-                     <span class="left-button">上传头像</span>
+                     <span class="left-button">选择头像</span>
                  </span>
              </label>
          </div>
-         <img class="head" :src="imgurl" alt="">
+        <img :class="imgurl!=''?'head':'nohead'" :src="imgurl" alt="">
+         <mt-button size="large" type="primary" @click="uploadImage()">确认修改</mt-button>
         <mt-button @click="goOut()" class="goout" size="large">退出登录</mt-button>
          <Header title="设置" backNum="1"/>
     </div>
@@ -19,13 +18,15 @@
 <script>
 import Header from '../../components/header'
 import fetch from "../../fetch"
+import { Toast } from 'mint-ui';
 export default {
 components:{
       Header
 },
 data(){
     return{
-       imgurl:'' 
+       imgurl:'',
+       fileImg:null
     }
 },
 methods:{
@@ -35,28 +36,51 @@ methods:{
             localStorage.removeItem("userId")   
             this.$store.state.userId=""
         },
+        // 选择图片
         upload(){
            var rd = new FileReader();//创建文件读取对象
             var file=this.$refs.inputFile.files[0];//获取file组件中的文件
+            // alert(JSON.stringify(this.fileImg)
+            // console.log(file)
             rd.readAsDataURL(file);//文件读取装换为base64类型
             let that=this
+            var imageType = /^image\//;
+            // 是否是图片
+             if(!imageType.test(file.type)) {
+               that.toast("请选择图片格式的文件")
+                    return;
+                }
             rd.onloadend = function(e) {
-        //    console.log(e.currentTarget.result)
              that.imgurl=e.currentTarget.result
             }
-             var imageType = /^image\//;
-            // 是否是图片
-            if(!imageType.test(file.type)) {
-            alert("tupian")
-                return;
+            this.fileImg=file
+           
+        },
+        // 上传图片
+        uploadImage(){
+            if( this.imgurl==""){
+                this.toast("请选择图片")
+                return
             }
+            
             var formdata = new FormData()
-            formdata.append('multfile', file)
+            formdata.append('multfile', this.fileImg)
             fetch.post("/upload/headImg",formdata,"multer")
             .then((res)=>{
-
+                alert(JSON.stringify(res))
+                if(res.code==1){
+                    this.toast("修改成功")
+                    this.imgurl=""
+                }
             })
-        }
+        },
+          toast(msg){
+            Toast({
+                message: msg,
+                position: 'middle',
+                duration: 1000
+                });
+         },
     }
 }
 </script>
@@ -79,7 +103,7 @@ methods:{
             clip:rect(0,0,0,0);
         }
         .inputFileWrapper .custorm-style{
-            width: 390px;
+            width:100VW;
             height: 50px;
             display: flex;
             justify-content: center;
@@ -95,5 +119,8 @@ methods:{
             width: 50px;
             height: 50px;
             border-radius: 50%;
+        }
+        .nohead{
+            display: none
         }
 </style>
