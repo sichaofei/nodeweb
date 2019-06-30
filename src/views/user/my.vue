@@ -2,7 +2,8 @@
     <div class="userBox">
         <div class="user">
             <div class="left">
-                <img src="../../images/mode.jpg" alt="">
+                <img src="../../images/mode.jpg" alt="" v-if="imgUrl.length==0">
+                <img :src="[imgUrl[0]]" alt="" v-if="imgUrl.length>0">
             </div>
             <div class="right">
                 <div>{{name}} <span>{{phone}}</span> </div>
@@ -23,7 +24,8 @@ export default {
             },
             name:'',
             timestamp:'',
-            phone:''
+            phone:'',
+            imgUrl:[]
         }
     },
     computed:{
@@ -32,7 +34,6 @@ export default {
         )
     },
     created(){
-        console.log(this.userId)
         fetch.post("/my/msg",{userId:this.userId})
         .then((res)=>{
             if(res.code==1){
@@ -41,6 +42,7 @@ export default {
                 this.formatDate(res.data.timestamp)
             }
         })
+         this.getuserImg()
     },
     methods:{
         formatDate(now) { 
@@ -52,6 +54,17 @@ export default {
         } ,
         todetail(){
             this.$router.push("/mydetail")
+        },
+        // 获取用户头像
+        getuserImg(){
+            let obj={userId:this.userId}
+            fetch.post("/user/headImg",obj)
+            .then((res)=>{
+                console.log(res)
+                if(res.data){
+                    this.imgUrl=res.data.imgUrl
+                }
+            })
         }
     }
 }

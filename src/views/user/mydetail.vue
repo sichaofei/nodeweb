@@ -3,13 +3,13 @@
         <div class="inputFileWrapper">
              <label for="inputFile">
                  <!-- <input type="file" id="inputFile" @input="upload()" ref="inputFile"/> -->
-                 <input type="file" name="multfile" id="inputFile" multiple="multiple" @change="upload()" ref="inputFile" accept="image/*">
+                 <input type="file" id="inputFile" @change="upload()" ref="inputFile" accept="image/*">
                  <span class="custorm-style">
                      <span class="left-button">选择头像</span>
                  </span>
              </label>
          </div>
-        <img :class="imgurl!=''?'head':'nohead'" :src="imgurl" alt="">
+        <img :class="imgurl.length!=0?'head':'nohead'" :src="imgurl" alt="">
          <mt-button size="large" type="primary" @click="uploadImage()">确认修改</mt-button>
         <mt-button @click="goOut()" class="goout" size="large">退出登录</mt-button>
          <Header title="设置" backNum="1"/>
@@ -19,6 +19,7 @@
 import Header from '../../components/header'
 import fetch from "../../fetch"
 import { Toast } from 'mint-ui';
+import {mapGetters} from "vuex"
 export default {
 components:{
       Header
@@ -28,6 +29,12 @@ data(){
        imgurl:'',
        fileImg:null
     }
+},
+computed:{
+...mapGetters(["userId"])
+},
+created(){
+       console.log(this.userId)
 },
 methods:{
         goOut(){
@@ -62,24 +69,32 @@ methods:{
                 this.toast("请选择图片")
                 return
             }
-            
             var formdata = new FormData()
             formdata.append('multfile', this.fileImg)
             fetch.post("/upload/headImg",formdata,"multer")
             .then((res)=>{
-                alert(JSON.stringify(res))
-                if(res.code==1){
-                    this.toast("修改成功")
-                    this.imgurl=""
-                }
+                 this.uploadImgMongodb(res.data.imgurl)
             })
         },
-          toast(msg){
+        // 上传图片绑定数据库
+        uploadImgMongodb(url){
+            console.log(this.userId)
+            let obj={
+                imgUrl:[url],
+                userId:this.userId
+            }
+            fetch.post("/upload/imgMongodb",obj)
+            .then((res)=>{
+                this.imgurl=""
+                console.log(res)
+            })
+        },
+        toast(msg){
             Toast({
                 message: msg,
                 position: 'middle',
                 duration: 1000
-                });
+            });
          },
     }
 }

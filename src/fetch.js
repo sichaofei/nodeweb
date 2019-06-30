@@ -40,8 +40,9 @@ export default class NetUtil {
         if(multer){
             console.log(1)
             init={
-                method: 'POST',
-                body:params
+                // formdata请求设置
+                method: "POST",
+                body: params
             }
         }
         return new Promise(function (resolve, reject) {

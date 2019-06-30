@@ -71,10 +71,10 @@ const router=new Router({
   ]
 })
 router.beforeEach((to, from, next) => {
+  if(localStorage.getItem("userId")){
+    store.state.userId=localStorage.getItem("userId")
+  }
   if (to.meta.isLogin) {  // 判断该路由是否需要登录权限
-    if(localStorage.getItem("userId")){
-      store.state.userId=localStorage.getItem("userId")
-    }
       if (store.state.userId!="") {  // 通过vuex state获取当前的token是否存在
           next();
       }
