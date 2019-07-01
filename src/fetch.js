@@ -1,4 +1,4 @@
-const url = 'http://localhost:8081';
+const url = 'http://192.168.0.108:8081';
 export default class NetUtil {
     static get(uri) {
         return new Promise(function (resolve, reject) {
@@ -40,8 +40,9 @@ export default class NetUtil {
         if(multer){
             console.log(1)
             init={
-                method: 'POST',
-                body:params
+                // formdata请求设置
+                method: "POST",
+                body: params
             }
         }
         return new Promise(function (resolve, reject) {

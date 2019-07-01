@@ -1,8 +1,8 @@
 <template>
     <div class="login">
         <h1>登陆</h1>
-        <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field>
-        <mt-field label="密码" placeholder="请输入密码" type="password" v-model="password"></mt-field>
+        <mt-field label="用户名"  @blur.native.capture="bulrScroll()" placeholder="请输入用户名" v-model="username"></mt-field>
+        <mt-field label="密码"  @blur.native.capture="bulrScroll()" placeholder="请输入密码" type="password" v-model="password"></mt-field>
         <mt-button @click="login()" type="primary" class="loginTxt">登陆</mt-button>
          <mt-button @click="toreser()" type="default" class="loginTxt">注册</mt-button>
         <Header title="登陆" :backNum="num"/>
@@ -88,6 +88,10 @@ export default {
                 duration: 1000
         });
     },
+    // 解决键盘落下页面回弹
+    bulrScroll(){
+        window.scrollTo(0,0)
+    }
    }
 }
 </script>
