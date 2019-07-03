@@ -13,6 +13,7 @@ import Header from '../../components/header'
 import fetch from "../../fetch"
 import { Toast } from 'mint-ui';
 import {mapActions} from 'vuex'
+import socket from "../../socket"
 export default {
   components:{
       Header
@@ -38,15 +39,18 @@ export default {
      }
    },
    created() {
-       console.log(this.$route)
         if(this.$route.query.redirect){
              this.redirect=this.$route.query.redirect
         }
-        console.log()
+      },
+      beforeRouteLeave (to, from, next) {
+          // ...
+          to.meta.keepAlive=false
+          next()
       },
    methods:{
        ...mapActions( // 语法糖
-          ['changeUserId'] // 相当于this.$store.dispatch('modifyName'),提交这个方法
+          ['changeUserId',"changeUser"] // 相当于this.$store.dispatch('modifyName'),提交这个方法
       ),
     //   注册
       toreser(){
@@ -66,17 +70,22 @@ export default {
            }
            fetch.post('/login/msg',obj)
            .then((res)=>{
-               console.log(res)
+            //    console.log(res)
                if(res.code==0){
                    this.toast(res.msg)
                }else{
+                //    存储vuex
+             
                    this.changeUserId(res.data.userId)
+                   this.changeUser(res.data)
+                    this.$socket.emit('socketlogin',res.data);       //触发socket连接
                    localStorage.setItem("userId",res.data.userId);
                    if(!this.redirect){
                         this.$router.replace({ path:"/"})
                    }else{
                         this.$router.replace({ path:this.redirect})
                    }
+                      socket()
                   
                }
            })

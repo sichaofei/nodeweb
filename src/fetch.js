@@ -1,4 +1,5 @@
-const url = 'http://192.168.0.108:8081';
+// const url = 'http://192.168.0.108:8081';
+const url = 'http://192.168.60.228:8081';
 export default class NetUtil {
     static get(uri) {
         return new Promise(function (resolve, reject) {
@@ -38,7 +39,6 @@ export default class NetUtil {
         };
         // 上传图片
         if(multer){
-            console.log(1)
             init={
                 // formdata请求设置
                 method: "POST",

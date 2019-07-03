@@ -5,14 +5,16 @@
                  <!-- <input type="file" id="inputFile" @input="upload()" ref="inputFile"/> -->
                  <input type="file" id="inputFile" @change="upload()" ref="inputFile" accept="image/*">
                  <span class="custorm-style">
-                     <span class="left-button">选择头像</span>
+                    <img :class="imgurl.length!=0?'head':'nohead'" :src="imgurl" alt="">
+                     <span :class="imgurl.length==0?'left-button':'nohead'">选择头像</span>
                  </span>
              </label>
          </div>
-        <img :class="imgurl.length!=0?'head':'nohead'" :src="imgurl" alt="">
-         <mt-button size="large" type="primary" @click="uploadImage()">确认修改</mt-button>
-        <mt-button @click="goOut()" class="goout" size="large">退出登录</mt-button>
-         <Header title="设置" backNum="1"/>
+         <div class="imglist">
+             <img :src="item" alt="" v-for="(item,index) in imgList" :key="index" @click="uplateImg(item)">
+         </div>
+         <mt-button class="button" size="large" type="primary" v-if="imgurl.length!=0" @click="uploadClick()">确认修改</mt-button>
+         <Header title="头像设置" backNum="1"/>
     </div>
 </template>
 <script>
@@ -27,21 +29,33 @@ components:{
 data(){
     return{
        imgurl:'',
-       fileImg:null
+       fileImg:null,
+        imgList:[],
+        // 1新增 2历史
+        type:1
     }
 },
+    beforeRouteLeave (to, from, next) {
+          to.meta.keepAlive=false
+          next()
+    },
 computed:{
 ...mapGetters(["userId"])
 },
 created(){
-       console.log(this.userId)
+    this. getuserImg()
 },
 methods:{
-        goOut(){
-            this.$router.push({path: '/login',
-              query: {redirect: "/my"}})  // 将跳转的路由path作为参数，登录成功后跳转到该路由)
-            localStorage.removeItem("userId")   
-            this.$store.state.userId=""
+     // 获取用户头像
+        getuserImg(){
+            let obj={userId:this.userId}
+            fetch.post("/user/headImg",obj)
+            .then((res)=>{
+                if(res.data){
+                    this.imgList=res.data.imgUrl
+                    this.imgurl=""
+                }
+            })
         },
         // 选择图片
         upload(){
@@ -58,10 +72,19 @@ methods:{
                     return;
                 }
             rd.onloadend = function(e) {
+                this.type=1
              that.imgurl=e.currentTarget.result
             }
             this.fileImg=file
            
+        },
+        // 点击修改
+        uploadClick(){
+            if(this.type==1){
+                this.uploadImage()
+            }else{
+                this. uplateImgTrue()
+            }
         },
         // 上传图片
         uploadImage(){
@@ -78,7 +101,6 @@ methods:{
         },
         // 上传图片绑定数据库
         uploadImgMongodb(url){
-            console.log(this.userId)
             let obj={
                 imgUrl:[url],
                 userId:this.userId
@@ -86,7 +108,22 @@ methods:{
             fetch.post("/upload/imgMongodb",obj)
             .then((res)=>{
                 this.imgurl=""
-                console.log(res)
+                let list=this.imgList
+                list.unshift(res.data.imgUrl[0])
+            })
+        },
+        // 更改历史为默认头像
+        uplateImg(item){
+            this.type=2
+            this.imgurl=item
+        },
+        uplateImgTrue(){
+            let obj={userId:this.userId,imgUrl:this.imgurl}
+            fetch.post("/uplate/userImg",obj)
+            .then((res)=>{
+                if(res.code==1){
+                     this.getuserImg()
+                }
             })
         },
         toast(msg){
@@ -119,23 +156,42 @@ methods:{
         }
         .inputFileWrapper .custorm-style{
             width:100VW;
-            height: 50px;
+            height: 100px;
             display: flex;
             justify-content: center;
         }
         .inputFileWrapper .custorm-style .left-button{
-            width: 80px;
-            line-height: 50px;
+            width: 100px;
+            line-height: 100px;
             background: #cccccc;
             color: #fff;
             display: block;
             text-align: center;
         }.head{
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            /* border-radius: 50%; */
         }
         .nohead{
             display: none
         }
+        .button{
+            margin-top: 200px;
+            width: 50%;
+            margin-left: 25%;
+        }
+        .imglist{
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 20px 0 17px;
+            box-sizing: border-box;
+           
+        }
+         .imglist img{
+             width: 50px;
+             height: 50px;
+             margin-top: 10px;
+            margin-left: 3px;
+         }
 </style>

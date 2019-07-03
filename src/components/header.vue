@@ -11,8 +11,6 @@ export default {
         backNum:String
         },
         created(){
-            
-            console.log(this.$route.matched)
         },
     methods:{
         back(){
@@ -37,6 +35,7 @@ export default {
         font-size: 16px;
         display: flex;
         z-index: 1000;
+
     }
     .header div{
         text-align:center;
@@ -46,10 +45,9 @@ export default {
         width: 20%;
         position: absolute;
         left: 0;
-      top: 0;
+         top: 0;
     }
     .title{
         width: 100%;
-
     }
 </style>

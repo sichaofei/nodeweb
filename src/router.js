@@ -21,14 +21,27 @@ const router=new Router({
           path:"/index",
           name:"index",
           component: Index,
+          meta:{
+            keepAlive:false
+          }
         },
         {
           path:"/my",
           name:"my",
           meta:{
             isLogin:true,
+            keepAlive:true
           },
           component:()=>import("./views/user/my.vue")
+        },
+        {
+          path:'/peoples',
+          name:'peoples',
+          meta:{
+            isLogin:true,
+            keepAlive:false
+          },
+          component:()=>import("./views/socket/peoples")
         }
       ]
     },
@@ -66,13 +79,27 @@ const router=new Router({
     },{
       path:'/mydetail',
       name:"mydetail",
+      meta:{
+        isLogin:true,
+      },
       component:()=>import("./views/user/mydetail")
+    },
+    {
+      path:'/socket',
+      name:'socket',
+      meta:{
+        isLogin:true,
+        keepAlive:false
+      },
+      component:()=>import("./views/socket/index")
     }
   ]
 })
 router.beforeEach((to, from, next) => {
   if(localStorage.getItem("userId")){
     store.state.userId=localStorage.getItem("userId")
+  }else{
+    store.state.userId=""
   }
   if (to.meta.isLogin) {  // 判断该路由是否需要登录权限
       if (store.state.userId!="") {  // 通过vuex state获取当前的token是否存在

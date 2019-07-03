@@ -10,22 +10,28 @@
                 <div>{{timestamp}}</div>
             </div>
         </div>
-        <mt-button class="seting" size="large" @click="todetail()">设置</mt-button>
+        <mt-button class="seting" size="large" @click="todetail()">头像设置</mt-button>
+        <mt-button @click="showconfirm()" class="goout" size="large">退出登录</mt-button>
+        <confirm :show="show" @confirm="confirm"/>
     </div>
 </template>
 <script>
 import {mapGetters} from "vuex"
 import fetch from "../../fetch"
+import socket from "../../socket"
+import confirm from "../../components/confirm"
 export default {
+    components:{confirm},
+    name:"my",
     data(){
         return{
             data:{
-
             },
             name:'',
             timestamp:'',
             phone:'',
-            imgUrl:[]
+            imgUrl:[],
+            show:false
         }
     },
     computed:{
@@ -33,6 +39,10 @@ export default {
             ["userId"]
         )
     },
+    beforeRouteLeave (to, from, next) {
+          to.meta.keepAlive=true
+          next()
+      },
     created(){
         fetch.post("/my/msg",{userId:this.userId})
         .then((res)=>{
@@ -45,6 +55,26 @@ export default {
          this.getuserImg()
     },
     methods:{
+        confirm(show){
+            this.show=false
+            if(show==true){
+                this.goOut()
+            }
+        },
+        showconfirm(){
+            this.show=true
+        },
+        // 退出登录
+         goOut(){
+             this.$socket.emit("socketOut",this.userId)
+            this.$router.push({path: '/login',
+              query: {redirect: "/my"}})  // 将跳转的路由path作为参数，登录成功后跳转到该路由)
+            localStorage.removeItem("userId")   
+            this.$store.state.userId=""
+            this.$socket.disconnect()
+            
+            
+        },
         formatDate(now) { 
              var date = new Date(now);
             var Y = date.getFullYear() + '-';
@@ -102,6 +132,9 @@ export default {
        margin-left:20px;
     }
     .seting{
-        margin-top: 80px;
+        margin-top:40px;
+    }
+    .mint-button {
+        margin-bottom: 10px;
     }
 </style>

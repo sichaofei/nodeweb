@@ -1,12 +1,13 @@
 <template>
     <div>
         <router-link to="/map"> 跳转地图</router-link>
+        <router-link to="/peoples"> 聊天</router-link>
     </div>
 </template>
 <script>
 import {mapActions, mapGetters} from 'vuex'
-export default {
-}
+</script>
+<script>
 </script>
 <style scoped>
     a{

@@ -2,3 +2,7 @@
 export function changeUserId({commit},userId){
     return commit('changeUserId',userId)
 }
+// 存储个人信息
+export function changeUser({commit},user){
+    return commit('changeUser',user)
+}

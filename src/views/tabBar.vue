@@ -1,14 +1,34 @@
 <template>
 <div>
-    <router-view></router-view>
+    <keep-alive>
+        <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
     <div class="taBar">
         <div>
-            <router-link to="/index" active-class="red" replace>首页</router-link>
+            <router-link to="/index"   active-class="red" replace>首页</router-link>
         </div>
-        <div> <router-link to="/my" active-class="red" replace>个人</router-link></div>
+        <div>
+            <router-link to="/peoples"  active-class="red" replace>好友</router-link>
+        </div>
+        <div> <router-link to="/my"  active-class="red" replace>个人</router-link></div>
     </div>
     </div>
 </template>
+<script>
+import socket from "../socket"
+socket()
+export default {
+    sockets:{
+       goout(){
+            this.$router.push({path: '/login',
+              query: {redirect: "/peoples"}})  // 将跳转的路由path作为参数，登录成功后跳转到该路由)
+            localStorage.removeItem("userId")   
+            this.$store.state.userId=""
+       }
+    }
+}
+</script>
 <style scoped>
     .taBar{
         position: fixed;
